@@ -5,21 +5,18 @@ import {
   StyleSheet,
   Button,
   Pressable,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BackgroundTimer from 'react-native-background-timer';
-
+import clockify from '../utils/Clockify';
 export default function Home({navigation, route}) {
-  const [mode, setMode] = useState('pomodoro');
-  //set an enum for [pomodoro, rest, long rest]; with time durations
-  const [timerState, setTimerState] = useState(true);
   const [secondsLeft, setSecondsLeft] = useState(1500);
-  //break 300, long break 900
-
   const [timerOn, setTimerOn] = useState(false);
-
+  const [mode, setMode] = useState('pomodoro');
+  const [timerState, setTimerState] = useState(true);
   useEffect(() => {
     if (timerOn) startTimer();
     else BackgroundTimer.stopBackgroundTimer();
@@ -43,31 +40,12 @@ export default function Home({navigation, route}) {
     }
   }, [secondsLeft]);
 
-  // useEffect(() => {
-  //   if (mode == 'pomodoro') setSecondsLeft(1500);
-  //   else if (mode == 'rest') setSecondsLeft(30);
-  //   else if (mode == 'lrest') setSecondsLeft(900);
-  // }, [mode]);
-
-  //shift to utilities file
-  const clockify = () => {
-    let hours = Math.floor(secondsLeft / 60 / 60);
-    let mins = Math.floor((secondsLeft / 60) % 60);
-    let seconds = Math.floor(secondsLeft % 60);
-    let displayHours = hours < 10 ? `0${hours}` : hours;
-    let displayMins = mins < 10 ? `0${mins}` : mins;
-    let displaySecs = seconds < 10 ? `0${seconds}` : seconds;
-    return {
-      displayHours,
-      displayMins,
-      displaySecs,
-    };
-  };
-
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <StatusBar barStyle="light-content"></StatusBar>
       <Text style={styles.time}>
-        {clockify().displayMins} Mins {clockify().displaySecs} Secs
+        {clockify(secondsLeft).displayMins} Mins{' '}
+        {clockify(secondsLeft).displaySecs} Secs
       </Text>
       <TouchableOpacity
         onPress={() => {
@@ -84,7 +62,12 @@ export default function Home({navigation, route}) {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          setSecondsLeft(timer.getTime());
+          setTimerOn(timerOn => !timerOn);
+          setSecondsLeft(() => {
+            if (mode == 'pomodoro') return 1500;
+            if (mode == 'rest') return 300;
+            if (mode == 'lrest') return 900;
+          });
         }}>
         <MaterialIcons name="refresh" size={40} />
       </TouchableOpacity>
@@ -92,30 +75,24 @@ export default function Home({navigation, route}) {
         <TouchableOpacity
           style={styles.mode}
           onPress={() => {
-            timer.setMode('pomodoro', () => {
-              setMode('pomodoro');
-              setSecondsLeft(timer.getTime());
-            });
+            setMode('pomodoro');
+            setSecondsLeft(1500);
           }}>
           <Text>pomodoro</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.mode}
           onPress={() => {
-            timer.setMode('rest', () => {
-              setMode('rest');
-              setSecondsLeft(timer.getTime());
-            });
+            setMode('rest');
+            setSecondsLeft(300);
           }}>
           <Text>Rest</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.mode}
           onPress={() => {
-            timer.setMode('lrest', () => {
-              setMode('lrest');
-              setSecondsLeft(timer.getTime());
-            });
+            setMode('lrest');
+            setSecondsLeft(900);
           }}>
           <Text>Long Rest</Text>
         </TouchableOpacity>
