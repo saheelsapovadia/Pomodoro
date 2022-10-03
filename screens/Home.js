@@ -52,7 +52,7 @@ export default function Home({navigation, route}) {
         {clockify(secondsLeft).displayMins} :{' '}
         {clockify(secondsLeft).displaySecs}{' '}
       </Text>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => {
           setTimerState(!timerState);
           setTimerOn(timerOn => !timerOn);
@@ -75,31 +75,51 @@ export default function Home({navigation, route}) {
           });
         }}>
         <MaterialIcons name="refresh" size={40} />
+      </TouchableOpacity> */}
+      <TouchableOpacity
+        onPress={() => {
+          setTimerState(!timerState);
+          setTimerOn(timerOn => !timerOn);
+        }}>
+        <View style={styles.btnContainer}>
+          <View style={styles.playPauseButton}>
+            <Text style={styles.playPauseButtonText}>
+              {timerState ? 'START' : 'STOP'}
+            </Text>
+            <View
+              style={
+                timerState ? styles.trianglePlay : styles.trianglePause
+              }></View>
+          </View>
+        </View>
       </TouchableOpacity>
       <View style={styles.modeView}>
         <TouchableOpacity
-          style={styles.mode}
           onPress={() => {
             setMode('pomodoro');
             setSecondsLeft(1500);
           }}>
-          <Text>Pomodoro</Text>
+          <Text style={mode === 'pomodoro' ? styles.modeSelected : styles.mode}>
+            Pomodoro
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.mode}
           onPress={() => {
             setMode('rest');
             setSecondsLeft(300);
           }}>
-          <Text>Rest</Text>
+          <Text style={mode === 'rest' ? styles.modeSelected : styles.mode}>
+            Rest
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.mode}
           onPress={() => {
             setMode('lrest');
             setSecondsLeft(900);
           }}>
-          <Text>Long Rest</Text>
+          <Text style={mode === 'lrest' ? styles.modeSelected : styles.mode}>
+            Long Rest
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -120,12 +140,76 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
+  btnContainer: {
+    flexDirection: 'row',
+    marginTop: 100,
+  },
+  playPauseButton: {
+    width: 130,
+    height: 130,
+    borderRadius: 90,
+    backgroundColor: colors.secondary,
+    alignItems: 'center',
+    // elevation: 8,
+  },
+  playPauseButtonText: {
+    color: colors.primary,
+    fontSize: 24,
+    marginTop: 32,
+    fontWeight: '600',
+  },
+  trianglePause: {
+    marginTop: 10,
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderTopWidth: 0,
+    borderRightWidth: 15,
+    borderBottomWidth: 30,
+    borderLeftWidth: 15,
+    borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: colors.primary,
+    borderLeftColor: 'transparent',
+    transform: [{rotate: '180deg'}],
+  },
+  trianglePlay: {
+    marginTop: 10,
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderTopWidth: 0,
+    borderRightWidth: 15,
+    borderBottomWidth: 30,
+    borderLeftWidth: 15,
+    borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: colors.primary,
+    borderLeftColor: 'transparent',
+  },
   modeView: {
     marginTop: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   mode: {
-    marginHorizontal: 10,
+    fontSize: 17,
+    color: colors.background,
+    padding: 10,
+    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    fontWeight: '500',
+  },
+  modeSelected: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: colors.background,
+    padding: 10,
+    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    borderRadius: 90,
+    backgroundColor: colors.modeSelectedBackground,
   },
 });
