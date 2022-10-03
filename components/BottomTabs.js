@@ -1,20 +1,21 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Tasks from '../screens/Tasks';
 import Home from '../screens/Home';
 import ProfileStack from '../screens/ProfileStack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import colors from '../assets/colors/colors';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = ({navigation}) => {
   const tabBarOptions = {
-    showLabel: false,
     position: 'absolute',
-    bottom: 25,
+    bottom: 18,
     left: 20,
     right: 20,
     elevation: 5,
@@ -28,9 +29,7 @@ const BottomTabs = ({navigation}) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: tabBarOptions,
-      }}
-      tabBarOptions={{
-        showLabel: false,
+        tabBarShowLabel: false,
       }}>
       <Tab.Screen
         name="Home"
@@ -46,7 +45,7 @@ const BottomTabs = ({navigation}) => {
         component={Tasks}
         options={({route}) => ({
           tabBarIcon: ({color, focused}) => (
-            <Icon icon="home" focused={focused} navigation={navigation} />
+            <Icon icon="tasks" focused={focused} navigation={navigation} />
           ),
         })}
       />
@@ -59,7 +58,18 @@ const BottomTabs = ({navigation}) => {
             ...tabBarOptions,
           },
           tabBarIcon: ({color, focused}) => (
-            <Icon icon="home" focused={focused} navigation={navigation} />
+            <View>
+              {/* onPress={() => props.navigation.navigate(props.navigateTo)}> */}
+              <MaterialCommunityIcons
+                name="face-man-profile"
+                size={29}
+                style={{
+                  marginBottom: 3,
+                  alignSelf: 'center',
+                  color: focused ? colors.primary : colors.background,
+                }}
+              />
+            </View>
           ),
         })}
       />

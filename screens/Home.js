@@ -13,6 +13,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BackgroundTimer from 'react-native-background-timer';
 import clockify from '../utils/Clockify';
 import colors from '../assets/colors/colors';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function Home({navigation, route}) {
   const [secondsLeft, setSecondsLeft] = useState(1500);
@@ -41,10 +42,12 @@ export default function Home({navigation, route}) {
       BackgroundTimer.stopBackgroundTimer();
     }
   }, [secondsLeft]);
-
+  useEffect(() => {
+    changeNavigationBarColor(colors.primary);
+  }, []);
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content"></StatusBar>
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
       <Text style={styles.time}>
         {clockify(secondsLeft).displayMins} :{' '}
         {clockify(secondsLeft).displaySecs}{' '}
