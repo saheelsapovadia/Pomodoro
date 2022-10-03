@@ -3,12 +3,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
-  Pressable,
   StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BackgroundTimer from 'react-native-background-timer';
 import clockify from '../utils/Clockify';
@@ -45,6 +42,18 @@ export default function Home({navigation, route}) {
   useEffect(() => {
     changeNavigationBarColor(colors.primary);
   }, []);
+
+  useEffect(() => {
+    setTimerState(true);
+    setTimerOn(false);
+    if (mode == 'pomodoro') {
+      setSecondsLeft(1500);
+    } else if (mode == 'rest') {
+      setSecondsLeft(300);
+    } else {
+      setSecondsLeft(900);
+    }
+  }, [mode]);
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
@@ -52,52 +61,42 @@ export default function Home({navigation, route}) {
         {clockify(secondsLeft).displayMins} :{' '}
         {clockify(secondsLeft).displaySecs}{' '}
       </Text>
-      {/* <TouchableOpacity
-        onPress={() => {
-          setTimerState(!timerState);
-          setTimerOn(timerOn => !timerOn);
-        }}>
-        <View>
-          <FontAwesome
-            name={timerState ? 'play-circle' : 'pause-circle'}
-            size={60}
-            color={colors.secondary}
-          />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          setTimerOn(timerOn => !timerOn);
-          setSecondsLeft(() => {
-            if (mode == 'pomodoro') return 1500;
-            if (mode == 'rest') return 300;
-            if (mode == 'lrest') return 900;
-          });
-        }}>
-        <MaterialIcons name="refresh" size={40} />
-      </TouchableOpacity> */}
-      <TouchableOpacity
-        onPress={() => {
-          setTimerState(!timerState);
-          setTimerOn(timerOn => !timerOn);
-        }}>
-        <View style={styles.btnContainer}>
-          <View style={styles.playPauseButton}>
-            <Text style={styles.playPauseButtonText}>
-              {timerState ? 'START' : 'STOP'}
-            </Text>
-            <View
-              style={
-                timerState ? styles.trianglePlay : styles.trianglePause
-              }></View>
+      <View style={styles.center}>
+        <TouchableOpacity
+          onPress={() => {
+            setTimerState(!timerState);
+            setTimerOn(timerOn => !timerOn);
+          }}>
+          <View style={styles.btnContainer}>
+            <View style={styles.playPauseButton}>
+              <Text style={styles.playPauseButtonText}>
+                {timerState ? 'START' : 'STOP'}
+              </Text>
+              <View
+                style={
+                  timerState ? styles.trianglePlay : styles.trianglePause
+                }></View>
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.reset}
+          onPress={() => {
+            setTimerOn(false);
+            setTimerState(true);
+            setSecondsLeft(() => {
+              if (mode == 'pomodoro') return 1500;
+              if (mode == 'rest') return 300;
+              if (mode == 'lrest') return 900;
+            });
+          }}>
+          <MaterialIcons name="refresh" size={40} color={colors.secondary} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.modeView}>
         <TouchableOpacity
           onPress={() => {
             setMode('pomodoro');
-            setSecondsLeft(1500);
           }}>
           <Text style={mode === 'pomodoro' ? styles.modeSelected : styles.mode}>
             Pomodoro
@@ -106,7 +105,6 @@ export default function Home({navigation, route}) {
         <TouchableOpacity
           onPress={() => {
             setMode('rest');
-            setSecondsLeft(300);
           }}>
           <Text style={mode === 'rest' ? styles.modeSelected : styles.mode}>
             Rest
@@ -115,7 +113,6 @@ export default function Home({navigation, route}) {
         <TouchableOpacity
           onPress={() => {
             setMode('lrest');
-            setSecondsLeft(900);
           }}>
           <Text style={mode === 'lrest' ? styles.modeSelected : styles.mode}>
             Long Rest
@@ -140,9 +137,18 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
-  btnContainer: {
+  center: {
+    width: '100%',
     flexDirection: 'row',
-    marginTop: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reset: {
+    position: 'absolute',
+    right: 60,
+  },
+  btnContainer: {
+    // marginTop: 100,
   },
   playPauseButton: {
     width: 130,
