@@ -12,6 +12,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BackgroundTimer from 'react-native-background-timer';
 import clockify from '../utils/Clockify';
+import colors from '../assets/colors/colors';
+
 export default function Home({navigation, route}) {
   const [secondsLeft, setSecondsLeft] = useState(1500);
   const [timerOn, setTimerOn] = useState(false);
@@ -41,11 +43,11 @@ export default function Home({navigation, route}) {
   }, [secondsLeft]);
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content"></StatusBar>
       <Text style={styles.time}>
-        {clockify(secondsLeft).displayMins} Mins{' '}
-        {clockify(secondsLeft).displaySecs} Secs
+        {clockify(secondsLeft).displayMins} :{' '}
+        {clockify(secondsLeft).displaySecs}{' '}
       </Text>
       <TouchableOpacity
         onPress={() => {
@@ -56,7 +58,7 @@ export default function Home({navigation, route}) {
           <FontAwesome
             name={timerState ? 'play-circle' : 'pause-circle'}
             size={60}
-            color=""
+            color={colors.secondary}
           />
         </View>
       </TouchableOpacity>
@@ -78,7 +80,7 @@ export default function Home({navigation, route}) {
             setMode('pomodoro');
             setSecondsLeft(1500);
           }}>
-          <Text>pomodoro</Text>
+          <Text>Pomodoro</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.mode}
@@ -102,15 +104,20 @@ export default function Home({navigation, route}) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.primary,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   time: {
-    fontSize: 30,
-    color: 'black',
+    fontSize: 70,
+    fontFamily: 'Quantico-Bold',
+    color: colors.background,
     marginBottom: 30,
     textAlign: 'center',
   },
   modeView: {
-    // flex: 1,
-    // width: 100,
     marginTop: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
