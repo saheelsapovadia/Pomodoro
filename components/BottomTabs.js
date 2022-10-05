@@ -80,7 +80,6 @@ const BottomTabs = ({navigation}) => {
 const Icon = props => {
   return (
     <View>
-      {/* onPress={() => props.navigation.navigate(props.navigateTo)}> */}
       <FontAwesome5
         name={props.icon}
         size={25}

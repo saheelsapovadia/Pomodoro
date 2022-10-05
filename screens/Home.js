@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  LayoutAnimation,
+  NativeModules,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,11 +14,20 @@ import clockify from '../utils/Clockify';
 import colors from '../assets/colors/colors';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
+const {UIManager} = NativeModules;
+
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+
 export default function Home({navigation, route}) {
   const [secondsLeft, setSecondsLeft] = useState(1500);
   const [timerOn, setTimerOn] = useState(false);
   const [mode, setMode] = useState('pomodoro');
-  const [timerState, setTimerState] = useState(true);
+  const [timerState, setTimerState] = useState(false);
+  const [animationParameters, setAnimationParameters] = useState({
+    tasksDisplay: 'none',
+    modesDisplay: 'none',
+  });
   useEffect(() => {
     if (timerOn) startTimer();
     else BackgroundTimer.stopBackgroundTimer();
@@ -44,7 +55,7 @@ export default function Home({navigation, route}) {
   }, []);
 
   useEffect(() => {
-    setTimerState(true);
+    setTimerState(false);
     setTimerOn(false);
     if (mode == 'pomodoro') {
       setSecondsLeft(1500);
@@ -54,27 +65,66 @@ export default function Home({navigation, route}) {
       setSecondsLeft(900);
     }
   }, [mode]);
+
+  _onPress = () => {
+    // Animate the update
+    LayoutAnimation.spring();
+    if (timerState)
+      setAnimationParameters({
+        tasksDisplay: 'flex',
+        modesDisplay: 'flex',
+      });
+    else {
+      setAnimationParameters({
+        tasksDisplay: 'none',
+        modesDisplay: 'none',
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
-      <Text style={styles.time}>
-        {clockify(secondsLeft).displayMins} :{' '}
-        {clockify(secondsLeft).displaySecs}{' '}
-      </Text>
+      <View style={styles.timerView}>
+        {timerState ? (
+          <Text
+            style={[
+              styles.time,
+              timerState ? styles.timerPlay : styles.timerPause,
+            ]}>
+            {clockify(secondsLeft).displayMins} :{' '}
+            {clockify(secondsLeft).displaySecs}{' '}
+          </Text>
+        ) : (
+          <Text
+            style={[
+              styles.time,
+              timerState ? styles.timerPlay : styles.timerPause,
+            ]}>
+            {clockify(secondsLeft).displayMins}
+          </Text>
+        )}
+      </View>
+      <View
+        style={[
+          styles.tasks,
+          {display: animationParameters.tasksDisplay},
+        ]}></View>
       <View style={styles.center}>
         <TouchableOpacity
           onPress={() => {
             setTimerState(!timerState);
             setTimerOn(timerOn => !timerOn);
+            _onPress();
           }}>
           <View style={styles.btnContainer}>
             <View style={styles.playPauseButton}>
               <Text style={styles.playPauseButtonText}>
-                {timerState ? 'START' : 'STOP'}
+                {!timerState ? 'START' : 'STOP'}
               </Text>
               <View
                 style={
-                  timerState ? styles.trianglePlay : styles.trianglePause
+                  !timerState ? styles.trianglePlay : styles.trianglePause
                 }></View>
             </View>
           </View>
@@ -83,7 +133,7 @@ export default function Home({navigation, route}) {
           style={styles.reset}
           onPress={() => {
             setTimerOn(false);
-            setTimerState(true);
+            setTimerState(false);
             setSecondsLeft(() => {
               if (mode == 'pomodoro') return 1500;
               if (mode == 'rest') return 300;
@@ -93,7 +143,8 @@ export default function Home({navigation, route}) {
           <MaterialIcons name="refresh" size={40} color={colors.secondary} />
         </TouchableOpacity>
       </View>
-      <View style={styles.modeView}>
+      <View
+        style={[styles.modeView, {display: animationParameters.modesDisplay}]}>
         <TouchableOpacity
           onPress={() => {
             setMode('pomodoro');
@@ -130,12 +181,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  timerView: {
+    position: 'absolute',
+    top: '10%',
+  },
   time: {
-    fontSize: 70,
     fontFamily: 'Quantico-Bold',
     color: colors.background,
-    marginBottom: 30,
     textAlign: 'center',
+  },
+  timerPause: {
+    fontSize: 90,
+  },
+  timerPlay: {
+    fontSize: 70,
+  },
+  tasks: {
+    height: 60,
+    width: '80%',
+    marginTop: '50%',
+    marginBottom: 40,
   },
   center: {
     width: '100%',
@@ -147,16 +212,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 60,
   },
-  btnContainer: {
-    // marginTop: 100,
-  },
   playPauseButton: {
     width: 130,
     height: 130,
     borderRadius: 90,
     backgroundColor: colors.secondary,
     alignItems: 'center',
-    // elevation: 8,
   },
   playPauseButtonText: {
     color: colors.primary,
@@ -196,7 +257,9 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
   },
   modeView: {
-    marginTop: 50,
+    marginTop: 'auto',
+    position: 'absolute',
+    bottom: '15%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
