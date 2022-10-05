@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Quantico-Bold.ttf",
+      "sha1": "1946d4d7bce32e7779a1e0b8cfe5b0bf15abda2b"
+    },
+    {
+      "path": "assets/fonts/Quantico-BoldItalic.ttf",
+      "sha1": "a8758b8301605d43547d29b00fd76f09edee171c"
+    },
+    {
+      "path": "assets/fonts/Quantico-Italic.ttf",
+      "sha1": "469791d88569e865c72d98d88d88c8ee9dd45867"
+    },
+    {
+      "path": "assets/fonts/Quantico-Regular.ttf",
+      "sha1": "8e3ddbe4ed600c60d126907bb391fdcd67dd0263"
+    }
+  ]
+}
