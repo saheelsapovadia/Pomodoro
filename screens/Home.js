@@ -8,16 +8,24 @@ import {
   NativeModules,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 import BackgroundTimer from 'react-native-background-timer';
 import clockify from '../utils/Clockify';
 import colors from '../assets/colors/colors';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-
+import {Dropdown} from 'react-native-element-dropdown';
 const {UIManager} = NativeModules;
-
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import PlayPauseButton from '../components/PlayPauseButton';
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
+
+const data = [
+  {label: 'Item 1', value: '1'},
+  {label: 'Item 2', value: '2'},
+  {label: 'Item 3', value: '3'},
+  {label: 'Item 4', value: '4'},
+];
 
 export default function Home({navigation, route}) {
   const [secondsLeft, setSecondsLeft] = useState(1500);
@@ -25,9 +33,13 @@ export default function Home({navigation, route}) {
   const [mode, setMode] = useState('pomodoro');
   const [timerState, setTimerState] = useState(false);
   const [animationParameters, setAnimationParameters] = useState({
-    tasksDisplay: 'none',
-    modesDisplay: 'none',
+    tasksDisplay: 'flex',
+    modesDisplay: 'flex',
   });
+
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+
   useEffect(() => {
     if (timerOn) startTimer();
     else BackgroundTimer.stopBackgroundTimer();
@@ -105,44 +117,50 @@ export default function Home({navigation, route}) {
           </Text>
         )}
       </View>
-      <View
-        style={[
-          styles.tasks,
-          {display: animationParameters.tasksDisplay},
-        ]}></View>
-      <View style={styles.center}>
-        <TouchableOpacity
-          onPress={() => {
-            setTimerState(!timerState);
-            setTimerOn(timerOn => !timerOn);
-            _onPress();
-          }}>
-          <View style={styles.btnContainer}>
-            <View style={styles.playPauseButton}>
-              <Text style={styles.playPauseButtonText}>
-                {!timerState ? 'START' : 'STOP'}
-              </Text>
-              <View
-                style={
-                  !timerState ? styles.trianglePlay : styles.trianglePause
-                }></View>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.reset}
-          onPress={() => {
-            setTimerOn(false);
-            setTimerState(false);
-            setSecondsLeft(() => {
-              if (mode == 'pomodoro') return 1500;
-              if (mode == 'rest') return 300;
-              if (mode == 'lrest') return 900;
-            });
-          }}>
-          <MaterialIcons name="refresh" size={40} color={colors.secondary} />
-        </TouchableOpacity>
+      <View style={[styles.tasks, {display: animationParameters.tasksDisplay}]}>
+        {/* {renderLabel()} */}
+        {/* <Dropdown
+          style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          iconStyle={styles.iconStyle}
+          itemTextStyle={styles.itemTextStyle}
+          containerStyle={styles.containerStyle}
+          data={data}
+          maxHeight={300}
+          labelFie2ld="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select item' : '...'}
+          value={value}
+          // statusBarIsTranslucent
+          onFocus={() => {
+            changeNavigationBarColor(colors.primary);
+            setIsFocus(true);
+          }}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setValue(item.value);
+            setIsFocus(false);
+          }}
+          renderLeftIcon={() => (
+            <AntDesign
+              style={styles.icon}
+              color={isFocus ? 'blue' : 'black'}
+              name="Safety"
+              size={20}
+            />
+          )}
+        /> */}
       </View>
+      <PlayPauseButton
+        setSecondsLeft={setSecondsLeft}
+        setTimerOn={setTimerOn}
+        _onPress={_onPress}
+        mode={mode}
+        setTimerState={setTimerState}
+        timerState={timerState}
+        setAnimationParameters={setAnimationParameters}
+      />
       <View
         style={[styles.modeView, {display: animationParameters.modesDisplay}]}>
         <TouchableOpacity
@@ -202,60 +220,6 @@ const styles = StyleSheet.create({
     marginTop: '50%',
     marginBottom: 40,
   },
-  center: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reset: {
-    position: 'absolute',
-    right: 60,
-  },
-  playPauseButton: {
-    width: 130,
-    height: 130,
-    borderRadius: 90,
-    backgroundColor: colors.secondary,
-    alignItems: 'center',
-  },
-  playPauseButtonText: {
-    color: colors.primary,
-    fontSize: 24,
-    marginTop: 32,
-    fontWeight: '600',
-  },
-  trianglePause: {
-    marginTop: 10,
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderTopWidth: 0,
-    borderRightWidth: 15,
-    borderBottomWidth: 30,
-    borderLeftWidth: 15,
-    borderTopColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: colors.primary,
-    borderLeftColor: 'transparent',
-    transform: [{rotate: '180deg'}],
-  },
-  trianglePlay: {
-    marginTop: 10,
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderTopWidth: 0,
-    borderRightWidth: 15,
-    borderBottomWidth: 30,
-    borderLeftWidth: 15,
-    borderTopColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: colors.primary,
-    borderLeftColor: 'transparent',
-  },
   modeView: {
     marginTop: 'auto',
     position: 'absolute',
@@ -280,5 +244,48 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 90,
     backgroundColor: colors.modeSelectedBackground,
+  },
+  //Tasks
+  dropdown: {
+    height: 50,
+    borderColor: colors.secondary,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    // backgroundColor: 'black',
+  },
+  icon: {
+    marginRight: 5,
+  },
+  containerStyle: {
+    // backgroundColor: 'black',
+  },
+  label: {
+    position: 'absolute',
+    // backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    color: 'white',
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    backgroundColor: colors.background,
+  },
+  itemTextStyle: {
+    color: colors.secondary,
   },
 });
