@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-  PanResponder,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useRef} from 'react';
 import colors from '../assets/colors/colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -18,34 +11,13 @@ const PlayPauseButton = ({
   mode,
   setAnimationParameters,
 }) => {
-  const pan = useRef(new Animated.ValueXY()).current;
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: () => {
-        Animated.event([null, {dy: pan.y}]);
-        console.log('coordinates', pan.x, pan.y);
-      },
-      onPanResponderRelease: () => {
-        if (pan.y > 1) {
-          play();
-        } else {
-          Animated.spring(pan, {toValue: {x: 0, y: 0}}).start();
-        }
-      },
-    }),
-  ).current;
-
   const play = () => {
     setTimerState(!timerState);
     setTimerOn(timerOn => !timerOn);
     _onPress();
   };
-  console.log('logging');
   return (
-    <Animated.View
-      style={[styles.center, {transform: [{translateY: pan.y}]}]}
-      {...panResponder.panHandlers}>
+    <View style={[styles.center]}>
       <TouchableOpacity
         onPress={() => {
           play();
@@ -79,7 +51,7 @@ const PlayPauseButton = ({
         }}>
         <MaterialIcons name="refresh" size={40} color={colors.secondary} />
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 };
 

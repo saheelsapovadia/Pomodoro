@@ -13,10 +13,11 @@ import BackgroundTimer from 'react-native-background-timer';
 import clockify from '../utils/Clockify';
 import colors from '../assets/colors/colors';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import {Dropdown} from 'react-native-element-dropdown';
+
 const {UIManager} = NativeModules;
-import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import PlayPauseButton from '../components/PlayPauseButton';
+import DropDownPicker from 'react-native-dropdown-picker';
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
@@ -27,7 +28,7 @@ const data = [
   {label: 'Item 4', value: '4'},
 ];
 
-export default function Home({navigation, route}) {
+export default function Home({navigation, route, tasks, setTasks}) {
   const [secondsLeft, setSecondsLeft] = useState(1500);
   const [timerOn, setTimerOn] = useState(false);
   const [mode, setMode] = useState('pomodoro');
@@ -36,9 +37,6 @@ export default function Home({navigation, route}) {
     tasksDisplay: 'flex',
     modesDisplay: 'flex',
   });
-
-  const [value, setValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
 
   useEffect(() => {
     if (timerOn) startTimer();
@@ -93,6 +91,12 @@ export default function Home({navigation, route}) {
       });
     }
   };
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    {label: 'Apple', value: 'apple'},
+    {label: 'Banana', value: 'banana'},
+  ]);
 
   return (
     <View style={styles.container}>
@@ -118,39 +122,43 @@ export default function Home({navigation, route}) {
         )}
       </View>
       <View style={[styles.tasks, {display: animationParameters.tasksDisplay}]}>
-        {/* {renderLabel()} */}
-        {/* <Dropdown
-          style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          iconStyle={styles.iconStyle}
-          itemTextStyle={styles.itemTextStyle}
-          containerStyle={styles.containerStyle}
-          data={data}
-          maxHeight={300}
-          labelFie2ld="label"
-          valueField="value"
-          placeholder={!isFocus ? 'Select item' : '...'}
+        <DropDownPicker
+          open={open}
           value={value}
-          // statusBarIsTranslucent
-          onFocus={() => {
-            changeNavigationBarColor(colors.primary);
-            setIsFocus(true);
+          items={tasks}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setTasks}
+          placeholder="Select a Task"
+          placeholderStyle={{}}
+          dropDownContainerStyle={{
+            backgroundColor: colors.secondary,
+            borderWidth: 0,
           }}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            setValue(item.value);
-            setIsFocus(false);
+          props={{
+            activeOpacity: 0.8,
+            style: {
+              backgroundColor: colors.secondary,
+              height: 50,
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: 10,
+              borderRadius: 90,
+              elevation: 4,
+            },
           }}
-          renderLeftIcon={() => (
-            <AntDesign
-              style={styles.icon}
-              color={isFocus ? 'blue' : 'black'}
-              name="Safety"
-              size={20}
-            />
-          )}
-        /> */}
+          itemProps={{
+            style: {
+              // width: '80%',
+              padding: 10,
+              backgroundColor: colors.secondary,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginHorizontal: 'auto',
+            },
+          }}
+        />
       </View>
       <PlayPauseButton
         setSecondsLeft={setSecondsLeft}

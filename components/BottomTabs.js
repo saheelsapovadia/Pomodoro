@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -24,6 +24,10 @@ const BottomTabs = ({navigation}) => {
     height: 70,
   };
 
+  const [tasks, setTasks] = useState([
+    {label: 'Development', value: 'development'},
+    {label: 'Office', value: 'office'},
+  ]);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -33,7 +37,7 @@ const BottomTabs = ({navigation}) => {
       }}>
       <Tab.Screen
         name="Home"
-        component={Home}
+        children={() => <Home tasks={tasks} setTasks={setTasks} />}
         options={({route}) => ({
           tabBarIcon: ({color, focused}) => (
             <Icon icon="home" focused={focused} navigation={navigation} />
@@ -42,7 +46,7 @@ const BottomTabs = ({navigation}) => {
       />
       <Tab.Screen
         name="Tasks"
-        component={Tasks}
+        children={() => <Tasks tasks={tasks} setTasks={setTasks} />}
         options={({route}) => ({
           tabBarIcon: ({color, focused}) => (
             <Icon icon="tasks" focused={focused} navigation={navigation} />
