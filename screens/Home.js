@@ -93,10 +93,6 @@ export default function Home({navigation, route, tasks, setTasks}) {
   };
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'Apple', value: 'apple'},
-    {label: 'Banana', value: 'banana'},
-  ]);
 
   return (
     <View style={styles.container}>
@@ -135,6 +131,7 @@ export default function Home({navigation, route, tasks, setTasks}) {
             backgroundColor: colors.secondary,
             borderWidth: 0,
           }}
+          renderListItem={props => <Item {...props} />}
           props={{
             activeOpacity: 0.8,
             style: {
@@ -199,6 +196,16 @@ export default function Home({navigation, route, tasks, setTasks}) {
     </View>
   );
 }
+
+const Item = task => {
+  console.log(task);
+  return (
+    <View style={styles.ItemContainer}>
+      <Text style={styles.ItemItem}>{task.item.label}</Text>
+      <Text style={styles.ItemItem}>{task.item.pomoCount}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -295,5 +302,18 @@ const styles = StyleSheet.create({
   },
   itemTextStyle: {
     color: colors.secondary,
+  },
+  ItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: colors.secondary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'center',
+    marginHorizontal: 'auto',
+  },
+  ItemItem: {
+    fontSize: 15,
   },
 });

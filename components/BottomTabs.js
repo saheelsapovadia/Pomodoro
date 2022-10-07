@@ -25,8 +25,8 @@ const BottomTabs = ({navigation}) => {
   };
 
   const [tasks, setTasks] = useState([
-    {label: 'Development', value: 'development'},
-    {label: 'Office', value: 'office'},
+    {label: 'Development', value: 'development', pomoCount: 4},
+    {label: 'Office', value: 'office', pomoCount: 2},
   ]);
   return (
     <Tab.Navigator
@@ -34,6 +34,7 @@ const BottomTabs = ({navigation}) => {
         headerShown: false,
         tabBarStyle: tabBarOptions,
         tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
       }}>
       <Tab.Screen
         name="Home"
