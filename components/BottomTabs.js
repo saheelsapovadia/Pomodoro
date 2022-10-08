@@ -21,7 +21,7 @@ const BottomTabs = ({navigation}) => {
     elevation: 5,
     backgroundColor: colors.secondary,
     borderRadius: 90,
-    height: 70,
+    height: 60,
   };
 
   const [tasks, setTasks] = useState([

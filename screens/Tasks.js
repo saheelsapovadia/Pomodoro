@@ -6,30 +6,42 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ScrollView,
+  Modal,
 } from 'react-native';
 import React, {useState} from 'react';
 import colors from '../assets/colors/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AddTaskModal from '../components/AddTaskModal';
+const TaskList = item => {
+  return (
+    <View style={styles.taskItem}>
+      <Text style={styles.taskItemText}>{item.item.label}</Text>
+      <Text style={styles.taskItemText}>{item.item.pomoCount}</Text>
+    </View>
+  );
+};
 export default function Tasks({navigation, route, tasks, setTasks}) {
-  const TaskList = item => {
-    return (
-      <View style={styles.taskItem}>
-        <Text style={styles.taskItemText}>{item.item.label}</Text>
-      </View>
-    );
-  };
   const [number, onChangeNumber] = React.useState(null);
-
-  const addNewTask = () => {
-    setTasks([...tasks, {label: number, value: number}]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const addNewTask = newTask => {
+    setTasks([
+      ...tasks,
+      {
+        label: newTask.taskName,
+        value: newTask.taskName,
+        pomoCount: newTask.pomoCount,
+      },
+    ]);
     onChangeNumber('');
+    setModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
       {/* Popup for new task */}
-      <View style={styles.newTaskContainer}>
+      {/* <View style={styles.newTaskContainer}>
         <TextInput
           style={styles.input}
           onChangeText={onChangeNumber}
@@ -39,7 +51,27 @@ export default function Tasks({navigation, route, tasks, setTasks}) {
         <TouchableOpacity onPress={() => addNewTask()}>
           <Ionicons name="add-outline" size={40} />
         </TouchableOpacity>
-      </View>
+      </View> */}
+      <Button title="Add new task" onPress={() => setModalVisible(true)} />
+      <Modal
+        style={styles.addTaskModal}
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        {/* <TouchableWithoutFeedback
+          style={{flex: 1}}
+          onPress={() => {
+            setModalVisible(!modalVisible);
+          }}> */}
+        <AddTaskModal
+          addNewTask={addNewTask}
+          setModalVisible={setModalVisible}
+        />
+        {/* </TouchableWithoutFeedback> */}
+      </Modal>
 
       {/* List of all pending tasks */}
       <View style={styles.taskList}>
@@ -62,6 +94,7 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     backgroundColor: colors.primary,
     paddingBottom: 100,
+    paddingTop: 50,
   },
   newTaskContainer: {
     marginTop: '25%',
@@ -69,19 +102,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  input: {
-    height: 40,
-    margin: 12,
+  addTaskModal: {
+    backgroundColor: colors.secondary,
     width: '80%',
-    borderWidth: 1,
-    padding: 10,
+    height: '50%',
   },
   inputContainer: {},
   taskList: {
     flex: 1,
+    marginTop: 40,
   },
   taskItem: {
     // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: '80%',
     marginLeft: '10%',
     borderColor: colors.background,
@@ -90,5 +124,7 @@ const styles = StyleSheet.create({
   },
   taskItemText: {
     padding: 1,
+    color: colors.background,
+    fontSize: 20,
   },
 });

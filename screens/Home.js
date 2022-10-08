@@ -6,8 +6,9 @@ import {
   StatusBar,
   LayoutAnimation,
   NativeModules,
+  Animated,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 
 import BackgroundTimer from 'react-native-background-timer';
 import clockify from '../utils/Clockify';
@@ -37,7 +38,8 @@ export default function Home({navigation, route, tasks, setTasks}) {
     tasksDisplay: 'flex',
     modesDisplay: 'flex',
   });
-
+  // const tasksDisplay = useRef(new Animated.Value('flex')).current;
+  // const modesDisplay = useRef(new Animated.Value('flex')).current;
   useEffect(() => {
     if (timerOn) startTimer();
     else BackgroundTimer.stopBackgroundTimer();
@@ -79,18 +81,19 @@ export default function Home({navigation, route, tasks, setTasks}) {
   _onPress = () => {
     // Animate the update
     LayoutAnimation.spring();
-    if (timerState)
+    if (timerState) {
       setAnimationParameters({
         tasksDisplay: 'flex',
         modesDisplay: 'flex',
       });
-    else {
+    } else {
       setAnimationParameters({
         tasksDisplay: 'none',
         modesDisplay: 'none',
       });
     }
   };
+
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
 
@@ -128,12 +131,14 @@ export default function Home({navigation, route, tasks, setTasks}) {
           placeholder="Select a Task"
           placeholderStyle={{}}
           dropDownContainerStyle={{
-            backgroundColor: colors.secondary,
             borderWidth: 0,
+            width: '90%',
+            alignSelf: 'center',
           }}
           renderListItem={props => <Item {...props} />}
           props={{
             activeOpacity: 0.8,
+
             style: {
               backgroundColor: colors.secondary,
               height: 50,
@@ -144,19 +149,9 @@ export default function Home({navigation, route, tasks, setTasks}) {
               elevation: 4,
             },
           }}
-          itemProps={{
-            style: {
-              // width: '80%',
-              padding: 10,
-              backgroundColor: colors.secondary,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginHorizontal: 'auto',
-            },
-          }}
         />
       </View>
+      {/* <Animated.View style={styles.animatedView}> */}
       <PlayPauseButton
         setSecondsLeft={setSecondsLeft}
         setTimerOn={setTimerOn}
@@ -166,6 +161,7 @@ export default function Home({navigation, route, tasks, setTasks}) {
         timerState={timerState}
         setAnimationParameters={setAnimationParameters}
       />
+      {/* </Animated.View> */}
       <View
         style={[styles.modeView, {display: animationParameters.modesDisplay}]}>
         <TouchableOpacity
@@ -197,13 +193,14 @@ export default function Home({navigation, route, tasks, setTasks}) {
   );
 }
 
-const Item = task => {
-  console.log(task);
+const Item = props => {
   return (
-    <View style={styles.ItemContainer}>
-      <Text style={styles.ItemItem}>{task.item.label}</Text>
-      <Text style={styles.ItemItem}>{task.item.pomoCount}</Text>
-    </View>
+    <TouchableOpacity onPress={() => props.onPress(props)} activeOpacity={0.5}>
+      <View style={styles.ItemContainer}>
+        <Text style={styles.ItemItem}>{props.item.label}</Text>
+        <Text style={styles.ItemItem}>{props.item.pomoCount}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -217,13 +214,19 @@ const styles = StyleSheet.create({
   timerView: {
     position: 'absolute',
     top: '10%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   time: {
     fontFamily: 'Quantico-Bold',
     color: colors.background,
     textAlign: 'center',
+    padding: 0,
   },
   timerPause: {
+    padding: 0,
+    margin: 0,
     fontSize: 90,
   },
   timerPlay: {
@@ -235,6 +238,11 @@ const styles = StyleSheet.create({
     marginTop: '50%',
     marginBottom: 40,
   },
+  // animatedView: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
   modeView: {
     marginTop: 'auto',
     position: 'absolute',
