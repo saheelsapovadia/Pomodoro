@@ -1,32 +1,18 @@
-import {
-  View,
-  Text,
-  Button,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  StatusBar,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, StatusBar} from 'react-native';
 import React from 'react';
 import colors from '../assets/colors/colors';
-
+import Delivery from '../assets/images/Delivery.svg';
+import GoogleBtn from '../assets/images/Component_3.svg';
 const Login = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
       <View style={styles.ImageView}>
-        <ImageBackground
-          source={require('../assets/images/Delivery.jpg')}
-          resizeMode="cover"
-          style={styles.image}></ImageBackground>
+        <Delivery size={10} />
       </View>
       <View style={styles.ButtonView}>
         <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-          <Image
-            source={require('../assets/images/Google.png')}
-            // resizeMode="cover"
-            style={styles.googleBtn}></Image>
+          <GoogleBtn />
         </TouchableOpacity>
       </View>
     </View>

@@ -6,7 +6,7 @@ import {
   StatusBar,
   LayoutAnimation,
   NativeModules,
-  Animated,
+  Vibration,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 
@@ -38,6 +38,7 @@ export default function Home({navigation, route, tasks, setTasks}) {
     tasksDisplay: 'flex',
     modesDisplay: 'flex',
   });
+  const ONE_SECOND_IN_MS = 1000;
   // const tasksDisplay = useRef(new Animated.Value('flex')).current;
   // const modesDisplay = useRef(new Animated.Value('flex')).current;
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function Home({navigation, route, tasks, setTasks}) {
 
   useEffect(() => {
     if (secondsLeft === 0) {
+      Vibration.vibrate(2 * ONE_SECOND_IN_MS);
       BackgroundTimer.stopBackgroundTimer();
     }
   }, [secondsLeft]);
@@ -72,7 +74,7 @@ export default function Home({navigation, route, tasks, setTasks}) {
     if (mode == 'pomodoro') {
       setSecondsLeft(1500);
     } else if (mode == 'rest') {
-      setSecondsLeft(300);
+      setSecondsLeft(10);
     } else {
       setSecondsLeft(900);
     }
